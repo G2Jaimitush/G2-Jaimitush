@@ -4,11 +4,18 @@ import random
 tablero = [' ' for _ in range(9)]
 tablero[4] = 'X'  # La máquina siempre empieza en el centro
 
-# Función para mostrar el tablero
+# Función para mostrar el tablero con números en casillas disponibles
 def mostrar_tablero():
     print()
     for i in range(3):
-        print(' ' + ' | '.join(tablero[i * 3:(i + 1) * 3]))
+        fila = []
+        for j in range(3):
+            idx = i * 3 + j
+            if tablero[idx] == ' ':
+                fila.append(str(idx + 1))  # Muestra el número de la casilla disponible
+            else:
+                fila.append(tablero[idx])
+        print(' ' + ' | '.join(fila))
         if i < 2:
             print("---+---+---")
     print()
