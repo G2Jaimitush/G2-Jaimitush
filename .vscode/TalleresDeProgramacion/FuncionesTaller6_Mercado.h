@@ -3,33 +3,28 @@
 #define MaximoProductos 10
 #define MaximoNombre 30
 
-// Declaraciones de funciones
-int pedirCantidadProductos();
+// Funciones
+int pedirCantidad();
 void ingresarProductos(char nombres[][MaximoNombre], float precios[], int cantidad);
 void mostrarProductos(char nombres[][MaximoNombre], float precios[], int cantidad);
 void buscarProducto(char nombres[][MaximoNombre], float precios[], int cantidad);
-void productoMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad);
-void productoMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad);
-void precioPromedio(float precios[], int cantidad);
-void menu(char nombres[][MaximoNombre], float precios[], int cantidad);
-void limpiarBuffer();
+void mostrarMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad);
+void mostrarMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad);
+void calcularPromedio(float precios[], int cantidad);
 
-// Funciones auxiliares
-void limpiarBuffer() {
-    fflush(stdin);
-}
+// Definiciones de funciones
 
-int pedirCantidadProductos() {
+int pedirCantidad() {
     int cantidad;
 
 REPETIR:
     printf("Ingrese la cantidad de productos (maximo %d): ", MaximoProductos);
     scanf("%d", &cantidad);
-    limpiarBuffer();
+    fflush(stdin);
 
     if (cantidad < 1 || cantidad > MaximoProductos) {
         printf("Cantidad invalida. Intente nuevamente.\n");
-        goto REPETIR;  // vuelve arriba
+        goto REPETIR;
     }
 
     return cantidad;
@@ -39,12 +34,12 @@ REPETIR:
 void ingresarProductos(char nombres[][MaximoNombre], float precios[], int cantidad) {
     for (int i = 0; i < cantidad; i++) {
         printf("\nProducto %d:\n", i + 1);
+        fflush(stdin);
         printf("  Nombre: ");
         fgets(nombres[i], MaximoNombre, stdin);
-        nombres[i][strcspn(nombres[i], "\n")] = '\0';
+        nombres[i][strcspn(nombres[i], "\n")] = '\0'; // Eliminar salto de línea
         printf("  Precio: $ ");
         scanf("%f", &precios[i]);
-        limpiarBuffer();
     }
 }
 
@@ -58,6 +53,7 @@ void mostrarProductos(char nombres[][MaximoNombre], float precios[], int cantida
 void buscarProducto(char nombres[][MaximoNombre], float precios[], int cantidad) {
     char nombreBusqueda[MaximoNombre];
     printf("\nIngrese el nombre del producto a buscar: ");
+    fflush(stdin);
     fgets(nombreBusqueda, MaximoNombre, stdin);
     nombreBusqueda[strcspn(nombreBusqueda, "\n")] = '\0';
 
@@ -74,70 +70,31 @@ void buscarProducto(char nombres[][MaximoNombre], float precios[], int cantidad)
     }
 }
 
-void productoMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    int max = 0;
+void mostrarMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad) {
+    int maxProducto = 0;
     for (int i = 1; i < cantidad; i++) {
-        if (precios[i] > precios[max]) {
-            max = i;
+        if (precios[i] > precios[maxProducto]) {
+            maxProducto = i;
         }
     }
-    printf("Producto mas caro: %s - $%.2f\n", nombres[max], precios[max]);
+    printf("Producto mas caro: %s - $%.2f\n", nombres[maxProducto], precios[maxProducto]);
 }
 
-void productoMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    int min = 0;
+void mostrarMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad) {
+    int minProducto = 0;
     for (int i = 1; i < cantidad; i++) {
-        if (precios[i] < precios[min]) {
-            min = i;
+        if (precios[i] < precios[minProducto]) {
+            minProducto = i;
         }
     }
-    printf("Producto mas barato: %s - $%.2f\n", nombres[min], precios[min]);
+    printf("Producto mas barato: %s - $%.2f\n", nombres[minProducto], precios[minProducto]);
 }
 
-void precioPromedio(float precios[], int cantidad) {
+void calcularPromedio(float precios[], int cantidad) {
     float suma = 0;
     for (int i = 0; i < cantidad; i++) {
         suma += precios[i];
     }
     float promedio = suma / cantidad;
     printf("Precio promedio: $%.2f\n", promedio);
-}
-
-void menu(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    int opcion;
-    do {
-        printf("\n--- Menu ---\n");
-        printf("1. Buscar producto por nombre\n");
-        printf("2. Mostrar todos los productos\n");
-        printf("3. Mostrar producto mas caro\n");
-        printf("4. Mostrar producto mas barato\n");
-        printf("5. Calcular precio promedio\n");
-        printf("6. Salir\n");
-        printf("Seleccione una opcion: ");
-        scanf("%d", &opcion);
-        limpiarBuffer();
-
-        switch (opcion) {
-            case 1:
-                buscarProducto(nombres, precios, cantidad);
-                break;
-            case 2:
-                mostrarProductos(nombres, precios, cantidad);
-                break;
-            case 3:
-                productoMasCaro(nombres, precios, cantidad);
-                break;
-            case 4:
-                productoMasBarato(nombres, precios, cantidad);
-                break;
-            case 5:
-                precioPromedio(precios, cantidad);
-                break;
-            case 6:
-                printf("Saliendo del programa...\n");
-                break;
-            default:
-                printf("Opcion no valida. Intente de nuevo.\n");
-        }
-    } while (opcion != 6);
 }
