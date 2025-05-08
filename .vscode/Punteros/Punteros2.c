@@ -25,5 +25,8 @@ int main() {
     // Imprimimos el valor de la variable después de la modificación
     printf("El valor de var después de modificarValor es: %d\n", var);
 
+    // Imprimimos la dirección de memoria de la variable
+    printf("La dirección de var es: %p\n", &var);
+
     return 0;
 }
