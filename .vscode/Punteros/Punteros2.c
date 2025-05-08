@@ -28,5 +28,5 @@ int main() {
     // Imprimimos la dirección de memoria de la variable
     printf("La dirección de var es: %p\n", &var);
 
-    return 0;
+    return 0;   
 }
