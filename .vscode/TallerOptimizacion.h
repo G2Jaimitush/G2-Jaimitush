@@ -16,12 +16,19 @@ void verificarCapacidad(float *tiempos, int *recursos, int *cantidades, int cant
 
 int pedirCantidad() {
     int cantidad;
-    do {
-        printf("Ingrese la cantidad de productos (max %d): ", MaximoProductos);
-        scanf("%d", &cantidad);
-    } while (cantidad < 1 || cantidad > MaximoProductos);
+
+    REPETIR:
+    printf("Ingrese la cantidad de productos (max %d): ", MaximoProductos);
+    scanf("%d", &cantidad);
+
+    if (cantidad < 1 || cantidad > MaximoProductos) {
+        printf("Cantidad inválida. Debe estar entre 1 y %d.\n", MaximoProductos);
+        goto REPETIR;
+    }
+
     return cantidad;
 }
+
 
 void ingresarProductos(char (*nombres)[MaximoNombre], float *tiempos, int *cantidades, int *recursos, int cantidad) {
     for (int i = 0; i < cantidad; i++) {
