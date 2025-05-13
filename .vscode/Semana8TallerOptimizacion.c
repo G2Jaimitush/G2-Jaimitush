@@ -11,7 +11,7 @@ int main() {
     mostrarProductos(nombres, tiempos, cantidades, recursos, cantidad);
 
     int opcion;
-    float tiempoDisponible = 1000.0; // Ejemplo
+    float tiempoDisponible = 1000.0;
     int recursoDisponible = 500;
 
     do {
