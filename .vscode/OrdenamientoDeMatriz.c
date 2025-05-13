@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main () {
-    int i, j, k;
+    int i, j;
     int Filas1, Columnas1;
 
     // Entrada de dimensiones
@@ -39,6 +39,16 @@ int main () {
             vector [index++] = matriz1 [i][j];
         }
     }
+    
+    
+    // Imprimir el vector ordenado
+    printf("\nVector ordenado de mayor a menor:\n");
+    for (i = 0; i < total; i++) {
+        printf("%d ", vector[i]);
+    }
+    printf("\n");
+
+    
 
     //Ordenar el vector de mayor a menor
     for (i = 0; i < total - 1; i++) {
