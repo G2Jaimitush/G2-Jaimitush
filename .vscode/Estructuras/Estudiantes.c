@@ -16,7 +16,6 @@ int main (){
     fgets (estudiante1.nombre, 50, stdin);
     //scanf ("%s", estudiante1.nombre);
     //gets (estudiante1.nombre);
-
     //Con las 3 funciones anteriores se puede ingresar el nombre
 
     printf ("Ingrese el apellido del estudiante: ");
