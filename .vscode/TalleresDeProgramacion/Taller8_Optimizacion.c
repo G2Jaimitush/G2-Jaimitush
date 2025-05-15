@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <string.h>
+#include "TallerOptimizacion.h"
 
 #define MaximoProductos 10
 #define MaximoNombre 30
