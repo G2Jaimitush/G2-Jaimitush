@@ -15,10 +15,9 @@ struct Producto {
 int pedirCantidad();
 void ingresarProductos(struct Producto productos[], int cantidad);
 void mostrarProductos(struct Producto productos[], int cantidad);
-void buscarProducto(struct Producto productos[], int cantidad);
-void EditarNombre(struct Producto productos[], int cantidad);
-void EditarCantidad(struct Producto productos[], int cantidad);
-void EditarTiempo(struct Producto productos[], int cantidad);
+void editarProducto(struct Producto productos[], int cantidad);
+void EliminarProducto(struct Producto productos[], int cantidad);
+void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDisponible, int recursosDisponibles);
 
 
 // Definiciones de funciones
@@ -37,7 +36,6 @@ REPETIR:
 
     return cantidad;
 }
-
 
 void ingresarProductos(struct Producto productos[], int cantidad) {
     for (int i = 0; i < cantidad; i++) {
@@ -68,8 +66,8 @@ void mostrarProductos (struct Producto productos[], int cantidad) {
 
 void buscarProducto(struct Producto productos[], int cantidad){
     int code, opc2;
-    printf("\t - Si desea buscar por codigo presione (1)\n");
-    printf("\t - Si desea buscar por nombre presione (2)\n");
+    printf("\t Si desea buscar por codigo presione (1)\n");
+    printf("\t Si desea buscar por nombre presione (2)\n");
     scanf("%d", &opc2);
     fflush(stdin);
 
@@ -79,35 +77,29 @@ void buscarProducto(struct Producto productos[], int cantidad){
         fflush(stdin);
         for (int i = 0; i < cantidad; i++) {
             if (productos[i].codigo == code) {
-                printf("Producto encontrado: %s | Precio: %.2f | Codigo: %d | Tiempo/u: %.2f h\n", productos[i].nombre, productos[i].precio, productos[i].codigo, productos[i].tiempoFabricacion);
+                printf("Producto encontrado: %s | Precio: %.2f | Codigo: %d | Tiempo/u: %.2f h\n",productos[i].nombre, productos[i].precio, productos[i].codigo, productos[i].tiempoFabricacion);
                 return;
-            }else{
-                printf ("Producto no encontrado o inexistente\n");
             }
         }
         printf("Producto no encontrado.\n");
-    } 
-    else if (opc2 == 2) {
+
+    }else if (opc2 == 2) {
         printf("Ingrese el nombre del producto a buscar: ");
         fflush(stdin);
         char nombreBusqueda[50];
         fgets(nombreBusqueda, sizeof(nombreBusqueda), stdin);
-        nombreBusqueda[strcspn(nombreBusqueda, "\n")] = '\0'; // quitar salto
+        // Eliminar el salto de línea al final del nombre
+        nombreBusqueda[strcspn(nombreBusqueda, "\n")] = '\0';
+
 
         int encontrado = 0;
         for (int i = 0; i < cantidad; i++) {
-            // Asegurarse que el nombre del producto también esté limpio
             productos[i].nombre[strcspn(productos[i].nombre, "\n")] = '\0';
-
             if (strcmp(nombreBusqueda, productos[i].nombre) == 0) {
                 printf("Producto encontrado: %s | Precio: %.2f | Codigo: %d | Tiempo/u: %.2f h\n",productos[i].nombre, productos[i].precio, productos[i].codigo, productos[i].tiempoFabricacion);
                 encontrado = 1;
                 break;
             }
-        }
-
-        if (!encontrado) {
-            printf("Producto no encontrado.\n");
         }
     } 
     else {
@@ -115,52 +107,128 @@ void buscarProducto(struct Producto productos[], int cantidad){
     }
 }
 
+void Editarproducto(struct Producto productos[], int cantidad) {
+    int code, opc2;
+    for (int i = 0; i < cantidad; i++){
+        printf("Ingrese el codigo del producto a editar: ");
+        fflush(stdin);
+        scanf("%d", &code);
+        if (productos[i].codigo == code) {
+            printf("Producto encontrado: %s | Precio: %.2f | Codigo: %d | Tiempo/u: %.2f h\n", productos[i].nombre, productos[i].precio, productos[i].codigo, productos[i].tiempoFabricacion);
+            break;
+        } else {
+            printf("Producto no encontrado.\n");
+            return;
+        }
+    }
 
-void EditarNombre (struct Producto productos[], int cantidad) {
+    
+    printf("Selecciona que quieres editar del producto: \n");
+    printf ("\t1. Nombre\n");
+    printf ("\t2. Codigo\n");
+    printf ("\t3. Tiempo de Fabricacion\n");
+    printf ("\t4. Cantidad Fabricada\n");
+    printf ("\t5. Precio\n");    
+    printf ("Seleccione una opcion: "); 
+    fflush (stdin);
+    scanf("%d", &opc2);
+
+    // Casos
+    switch (opc2) {
+        case 1:
+            for (int i = 0; i < cantidad; i++) {
+                if (productos[i].codigo == code) {
+                    printf("Ingrese el nuevo nombre del producto: ");
+                    fflush(stdin); // Limpiar el buffer
+                    fgets(productos[i].nombre, sizeof(productos[i].nombre), stdin);
+                    productos[i].nombre[strcspn(productos[i].nombre, "\n")] = '\0'; // Eliminar salto
+                    printf("Nombre actualizado a: %s\n", productos[i].nombre);
+                    return;
+                }
+            }
+            break;
+
+        case 2:
+            for (int i = 0; i < cantidad; i++) {
+                if (productos[i].codigo == code) {
+                    printf("Ingrese el nuevo codigo del producto: ");
+                    fflush(stdin);
+                    scanf("%d", &productos[i].codigo);
+                    printf("Codigo actualizado a: %d\n", productos[i].codigo);
+                    return;
+                }
+            }
+            break;
+
+        case 3:
+            for (int i = 0; i < cantidad; i++) {
+                if (productos[i].codigo == code) {
+                    printf("Ingrese el nuevo Tiempo de Fabricacion del producto: ");
+                    fflush(stdin);
+                    scanf("%f", &productos[i].tiempoFabricacion);
+                    printf("Tiempo de Fabricacion actualizado a: %.2f\n", productos[i].tiempoFabricacion);
+                    return;
+                }
+            }
+            break;
+
+        case 4: // cantidad fabricada
+            for (int i = 0; i < cantidad; i++) {
+                if (productos[i].codigo == code) {
+                    printf("Ingrese la nueva cantidad fabricada del producto: ");
+                    fflush(stdin);
+                    scanf("%d", &productos[i].CantidadFabricada);
+                    printf("Cantidad fabricada actualizada a: %d\n", productos[i].CantidadFabricada);
+                    return;
+                }
+            }
+            break;
+
+        case 5: // precio
+            for (int i = 0; i < cantidad; i++) {
+                if (productos[i].codigo == code) {
+                    printf("Ingrese el nuevo precio del producto: ");
+                    fflush(stdin);
+                    scanf("%f", &productos[i].precio);
+                    printf("Precio actualizado a: %.2f\n", productos[i].precio);
+                    return;
+                }
+            }
+            break;
+
+        default:
+            printf("Opción inválida.\n");
+            break;
+    }
+}
+
+
+void EliminarProducto(struct Producto productos[], int cantidad) {
     int code;
-    printf("Ingrese el codigo del producto a editar: ");
-    fflush(stdin);
+    printf("Ingrese el codigo del producto a eliminar: ");
     scanf("%d", &code);
+    fflush(stdin);
+
     for (int i = 0; i < cantidad; i++) {
         if (productos[i].codigo == code) {
-            printf("Ingrese el nuevo nombre del producto: ");
-            fflush(stdin); // Limpiar el buffer
-            fgets (productos[i].nombre, sizeof(productos[i].nombre), stdin);
-            printf("Nombre actualizado a: %s\n", productos[i].nombre);
+            for (int j = i; j < cantidad - 1; j++) {
+                productos[j] = productos[j + 1];
+            }
+            printf("Producto eliminado.\n");
             return;
+        }
+    }
+    printf("Producto no encontrado.\n");
+}
+
+void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDisponible, int recursosDisponibles) {
+    for (int i = 0; i < cantidad; i++) {
+        if (productos[i].tiempoFabricacion * productos[i].cantidad <= tiempoDisponible && productos[i].cantidad <= recursosDisponibles) {
+            printf("Se cumple con la demanda con los productos %d\n", productos[i].nombre);
+        } else {
+            printf("No se cumple con la demanda con los productos %d\n", productos[i].nombre);
         }
     }
 }
 
-void EditarCantidad (struct Producto productos[], int cantidad) {
-    int code;
-    printf("Ingrese el codigo del producto a editar: ");
-    fflush(stdin);
-    scanf("%d", &code);
-    for (int i = 0; i < cantidad; i++) {
-        if (productos[i].codigo == code) {
-            printf("Ingrese la nueva cantidad del producto: ");
-            fflush(stdin);
-            scanf("%d", &productos[i].cantidad);
-            printf("Cantidad actualizada a: %d\n", productos[i].cantidad);
-            return;
-        }
-    }
-}
-
-void EditarTiempo (struct Producto productos[], int cantidad) {
-    int code;
-    printf("Ingrese el codigo del producto a editar: ");
-    fflush(stdin);
-    scanf("%d", &code);
-    for (int i = 0; i < cantidad; i++) {
-        if (productos[i].codigo == code) {
-            printf("Ingrese el nuevo tiempo de fabricacion del producto: ");
-            fflush(stdin);
-            scanf("%f", &productos[i].tiempoFabricacion);
-            printf("Tiempo actualizado a: %.2f\n", productos[i].tiempoFabricacion);
-            return;
-        }
-    }
-}
 

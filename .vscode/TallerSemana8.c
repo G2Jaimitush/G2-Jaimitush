@@ -4,7 +4,6 @@
 int main() {
     int cantidad = pedirCantidad();
 
-
     // Variables para tiempo y recursos
     int TiempoDisponible;
     int RecursosDisponibles;
@@ -23,14 +22,14 @@ int main() {
 
     int opcion;
     do {
+        
         printf("\n--- Menu ---\n");
         printf("1. Buscar producto por codigo o por nombre\n");
-        printf("2. Mostrar todos los productos\n");
-        printf("3. Editar nombre del producto por codigo\n");
-        printf("4. Editar cantidades de Recursos de Fabricacion\n");
-        printf("5. Editar tiempo de fabricacion por codigo\n");
-        printf("6. Verificar si cumple con la demanda (horas - recursos)\n");
-        printf("7. Salir\n");
+        printf("2. Mostrar todos los productos\n");        
+        printf("3. Editar producto ( Nombre - Codigo - Tiempo de Fabricacion - Cantidad de Producto - Precio)\n");
+        printf("4. Eliminar algun producto por codigo\n");
+        printf("5. Verificar si cumple con la demanda (horas - recursos)\n");
+        printf("6. Salir\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
         fflush(stdin);
@@ -45,21 +44,26 @@ int main() {
                 break;
 
             case 3:
-                EditarNombre(productos, cantidad);
+                Editarproducto(productos, cantidad);
                 break;
 
             case 4:
-                EditarCantidad(productos, cantidad);
+                EliminarProducto(productos, cantidad);
                 break;
+            
             case 5:
-                EditarTiempo(productos, cantidad);
+                CalcularDemanda(productos, cantidad, TiempoDisponible, RecursosDisponibles);
+                break;
+
+            case 6:
+                printf ("Gracias por usar el programa. Adios! :)\n");
                 break;
 
             default:
                 printf("Opcion no valida. Intente de nuevo.\n");
                 break;
         }
-    } while (opcion != 7);
+    } while (opcion != 6);
 
     return 0;
 }
