@@ -37,7 +37,7 @@ int main() {
         printf("\n--- Menu ---\n");
         printf("1. Buscar producto por codigo o por nombre\n");
         printf("2. Mostrar todos los productos\n");        
-        printf("3. Editar producto ( Nombre - Codigo - Tiempo de Fabricacion - Cantidad de Producto - Precio)\n");
+        printf("3. Editar producto ( Nombre - Precio - Codigo - Cantidad - Recurso X Unidad - Tiempo)\n");
         printf("4. Eliminar algun producto por codigo\n");
         printf("5. Verificar si cumple con la demanda (horas - recursos)\n");
         printf("6. Salir\n");
