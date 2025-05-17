@@ -190,7 +190,11 @@ void Editarproducto(struct Producto productos[], int cantidad) {
         return;
     }
     
+    // Mostrar el producto encontrado
+    printf ("Prodcto Encontrado: \n");
+    printf("%d. %s | Precio: %.2f | Codigo: %d | Cantidad: %d | Recursos X Unidad: %d | Tiempo/u: %.2f h\n",indice + 1, productos[indice].nombre, productos[indice].precio,productos[indice].codigo, productos[indice].cantidad,productos[indice].CantidadRecursos, productos[indice].tiempoFabricacion);
 
+    // Menú de edición
     
     printf("Selecciona que quieres editar del producto: \n");
     printf ("\t1. Nombre\n");
