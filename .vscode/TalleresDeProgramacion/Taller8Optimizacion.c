@@ -10,14 +10,25 @@ int main() {
 
 
     // Pedir tiempo y recursos disponibles
+    do{
     printf ("Ingrese el tiempo total disponible (horas): ");
     scanf("%d", &TiempoDisponible);
-    printf ("Ingrese los recursos totales disponibles: ");
-    scanf("%d", &RecursosDisponibles);
+        if (TiempoDisponible <= 0) {
+            printf("\tEl tiempo debe ser mayor a 0. Intente nuevamente.\n");
+        }
+    }while (TiempoDisponible <= 0);
+    
+    do{
+        printf ("Ingrese los recursos totales disponibles: ");
+        scanf("%d", &RecursosDisponibles);
+        if (RecursosDisponibles <= 0) {
+            printf("\tLos recursos deben ser mayores a 0. Intente nuevamente.\n");
+        }
+    }while (RecursosDisponibles <= 0);
+    
 
-    struct Producto productos[MaximoProductos];
+    //Llamada de funciones y estructura
     ingresarProductos(productos, cantidad);
-    printf("\n--- Productos Ingresados ---\n");
     mostrarProductos(productos, cantidad);
 
     int opcion;
@@ -48,7 +59,7 @@ int main() {
                 break;
 
             case 4:
-                EliminarProducto(productos, cantidad);
+                EliminarProducto(productos, &cantidad,eliminados,&eliminadosCount);
                 break;
             
             case 5:
@@ -67,9 +78,3 @@ int main() {
 
     return 0;
 }
-
-
-
-
-
-
