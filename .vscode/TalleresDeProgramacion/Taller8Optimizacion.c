@@ -9,7 +9,7 @@ int main() {
     int RecursosDisponibles;
 
 
-    // Pedir tiempo y recursos disponibles
+    // Pedir tiempo y recursos disponibles 
     do{
     printf ("Ingrese el tiempo total disponible (horas): ");
     scanf("%d", &TiempoDisponible);
@@ -27,7 +27,7 @@ int main() {
     }while (RecursosDisponibles <= 0);
     
 
-    //Llamada de funciones y estructura
+    //Llamada de funciones
     ingresarProductos(productos, cantidad);
     mostrarProductos(productos, cantidad);
 
