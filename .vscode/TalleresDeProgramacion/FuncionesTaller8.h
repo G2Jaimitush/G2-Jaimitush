@@ -51,7 +51,7 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
         getchar(); // Limpiar el buffer
          
         //lectura de nombre y validacion de caracteres:
-         char cadena[31]; // Máximo 50 caracteres + '\0'
+         char cadena[31]; // Máximo 30 caracteres + '\0'
          int exceso,buf;
    RepNom:
     exceso = 0;
@@ -69,7 +69,7 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
 
     // Limpiar el búfer si hubo exceso de caracteres
     if (exceso) {
-        printf("Ingresaste más de 30 caracteres \n");
+        printf("Ingresaste mas de 30 caracteres \n");
         do {
          buf = getchar(); // Leer un carácter
     } while (buf != '\n'); //elimina caracteres sobrantes hasta el salto de línea uno por uno
@@ -176,6 +176,7 @@ void Editarproducto(struct Producto productos[], int cantidad) {
         printf("Ingrese el codigo del producto a editar: ");
         fflush(stdin);
         scanf("%d", &code);
+
     // Buscar el producto
     for (int i = 0; i < cantidad; i++) {
         if (productos[i].codigo == code) {
@@ -350,6 +351,3 @@ void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDispon
         printf("No se cumple con la demanda de recursos. Excede por %d unidades.\n", recursosAcumulados - recursosDisponibles);
     }
 }
-
-
-

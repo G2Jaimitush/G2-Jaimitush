@@ -2,6 +2,8 @@
 #include "FuncionesTaller8.h"
 
 int main() {
+    printf ("Bienvenido! \n Este programa optimiza la produccion en una Fabrica de Componentes Electronicos \n\n");
+    
     int cantidad = pedirCantidad();
 
     // Variables para tiempo y recursos
@@ -27,7 +29,7 @@ int main() {
     }while (RecursosDisponibles <= 0);
     
 
-    //Llamada de funciones
+    //Llamada de funciones y estructura
     ingresarProductos(productos, cantidad);
     mostrarProductos(productos, cantidad);
 
