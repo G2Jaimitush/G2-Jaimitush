@@ -1,5 +1,4 @@
 #include <string.h>
-
 #define MaximoProductos 5
 
 struct Producto {
@@ -59,7 +58,7 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
     fgets(cadena, sizeof(cadena), stdin);
 
     // Elimina el salto de línea si está presente
-    if (cadena[strlen(cadena) - 1] == '\n') {//si en la posición 50 hay un salto de línea
+    if (cadena[strlen(cadena) - 1] == '\n') {//si en la posición 30 hay un salto de línea
         cadena[strlen(cadena) - 1] = '\0'; //eliminar salto
         
     } else {
