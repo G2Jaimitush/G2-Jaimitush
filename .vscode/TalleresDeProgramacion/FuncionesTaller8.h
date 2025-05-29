@@ -1,4 +1,6 @@
 #include <string.h>
+#include <math.h>
+#include <ctype.h>
 #define MaximoProductos 5
 
 struct Producto {
@@ -22,23 +24,33 @@ void ingresarProductos(struct Producto productos[], int cantidad);
 void mostrarProductos(struct Producto productos[], int cantidad);
 void editarProducto(struct Producto productos[], int cantidad);
 void EliminarProducto(struct Producto productos[], int *cantidad,struct Producto eliminados[], int *eliminadosCount);
-void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDisponible, int recursosDisponibles);
+void CalcularDemanda(struct Producto productos[], int cantidad, float tiempoDisponible, int recursosDisponibles);
 
 
 // Definiciones de funciones
 int pedirCantidad() {
     int cantidad;
+    float cantidad_entrada;
 
 REPETIR:
     printf("Ingrese la cantidad de productos (maximo %d): ", MaximoProductos);
-    scanf("%d", &cantidad);
-    fflush(stdin);
-
+    if (scanf("%f", &cantidad_entrada)!=1)
+    {
+        printf("Debe de ingresar un número, ingrese de nuevo: \n ");
+        while (getchar()!='\n');
+        goto REPETIR;
+    }
+    //Comprueba si el valor es entero o flotante
+    if(ceilf(cantidad_entrada)!=cantidad_entrada){
+        printf("Debe de ingresar un valor entero, ingrese de nuevo:\n");
+        while (getchar()!='\n');
+        goto REPETIR;
+    }
+    cantidad=cantidad_entrada;
     if (cantidad < 1 || cantidad > MaximoProductos) {
         printf("Cantidad invalida. Intente nuevamente.\n");
         goto REPETIR;
     }
-
     return cantidad;
 }
 
@@ -50,7 +62,7 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
         getchar(); // Limpiar el buffer
          
         //lectura de nombre y validacion de caracteres:
-         char cadena[31]; // Máximo 30 caracteres + '\0'
+         char cadena[31]; // Máximo 50 caracteres + '\0'
          int exceso,buf;
    RepNom:
     exceso = 0;
@@ -58,7 +70,7 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
     fgets(cadena, sizeof(cadena), stdin);
 
     // Elimina el salto de línea si está presente
-    if (cadena[strlen(cadena) - 1] == '\n') {//si en la posición 30 hay un salto de línea
+    if (cadena[strlen(cadena) - 1] == '\n') {//si en la posición 50 hay un salto de línea
         cadena[strlen(cadena) - 1] = '\0'; //eliminar salto
         
     } else {
@@ -78,30 +90,79 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
 
         //Ingrear precio y validacion de que sea mayor a 0
         do{
-        printf("Precio: $ ");
-        fflush(stdin);
-        scanf("%f", &productos[i].precio);
+            valid:
+            printf("Precio: $ ");
+            fflush(stdin);
+            if (scanf("%f",&productos[i].precio)!=1){
+                printf("Debe de ingresar un numero, ingrese de nuevo: \n ");
+                while (getchar()!='\n');
+                goto valid;
+            }
             if (productos[i].precio <= 0) {
                 printf("\tEl precio debe ser mayor a 0. Intente nuevamente.\n");
             }
         }while (productos[i].precio <= 0);
         
-        printf("Codigo: ");
-        scanf("%d", &productos[i].codigo);
+
+        //Ingreso del codigo
+        int CodidoRepetido;
+        do{
+            CodidoRepetido = 0; //Reinicia a que el codigo no sea repetido
+            printf("Codigo: ");
+            scanf("%d", &productos[i].codigo);
+            if (productos[i].codigo < 0) {
+                printf("\tEl codigo no puede ser negativo.\n");
+            }
+
+            for (int j = 0; j < i; j++) {
+                if (productos[i].codigo == productos[j].codigo) {
+                    printf("\tEl codigo ya existe. Intente nuevamente.\n");
+                    CodidoRepetido = 1; // Marca que el código es repetido
+                    break;                
+                }
+            }   
+        }while (productos[i].codigo < 0||CodidoRepetido == 1);
 
 
         //Ingresar cantidad de demanda y validacion de que sea mayor a 0
         do{
+            float demanda_entrada;
+            valid_demanda: 
+            demanda_entrada=0;
             printf("Cantidad de demandada: ");
-            scanf("%d", &productos[i].cantidad);
+            if (scanf("%f",&demanda_entrada)!=1){
+                printf("Debe de ingresar un numero, ingrese de nuevo: \n ");
+                while (getchar()!='\n');
+                goto valid_demanda;
+            }
+            //Comprueba si el valor es entero o flotante
+            if(ceilf(demanda_entrada)!=demanda_entrada){
+                printf("Debe de ingresar un valor entero, ingrese de nuevo:\n ");
+                while (getchar()!='\n');
+                goto valid_demanda;
+            }
+            productos[i].cantidad=demanda_entrada;
             if(productos[i].cantidad <= 0){
                 printf("\tLa cantidad debe ser mayor a 0. Intente nuevamente.\n");
             }
         }while (productos[i].cantidad <= 0);
 
         do{
+            float recursos_entrada;
+            valid_recursos: 
             printf ("Ingrese la cantidad de recursos para la fabricacion por unidad: ");
-            scanf("%d", &productos[i].CantidadRecursos);
+            if (scanf("%f",&recursos_entrada)!=1){
+                printf("Debe de ingresar un número, ingrese de nuevo: \n ");
+                while (getchar()!='\n');
+                goto valid_recursos;
+            }
+            //Comprueba si el valor es entero o flotante
+            if(ceilf(recursos_entrada)!=recursos_entrada){
+                printf("Debe de ingresar un valor entero, ingrese de nuevo:\n ");
+                while (getchar()!='\n');
+                goto valid_recursos;
+            }
+            productos[i].CantidadRecursos=recursos_entrada;
             if (productos[i].CantidadRecursos <= 0) {
                 printf("\tLa cantidad de recursos debe ser mayor a 0. Intente nuevamente.\n");
             }
@@ -109,8 +170,13 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
 
         //Ingresar cantidad fabricada y validacion de que sea mayor a 0
         do{
+            valid1:
             printf("Tiempo por unidad (horas): ");
-            scanf("%f", &productos[i].tiempoFabricacion);
+            if (scanf("%f",&productos[i].tiempoFabricacion)!=1){
+                printf("Debe de ingresar un número, ingrese de nuevo: \n ");
+                while (getchar()!='\n');
+                goto valid1;
+            }
             if (productos[i].tiempoFabricacion <= 0) {
                 printf("\tEl tiempo de fabricacion debe ser mayor a 0. Intente nuevamente.\n");
             }
@@ -172,10 +238,10 @@ void buscarProducto(struct Producto productos[], int cantidad){
 
 void Editarproducto(struct Producto productos[], int cantidad) {
     int code, opc2, indice = -1;
+    int CodigoRepetido;
         printf("Ingrese el codigo del producto a editar: ");
         fflush(stdin);
         scanf("%d", &code);
-
     // Buscar el producto
     for (int i = 0; i < cantidad; i++) {
         if (productos[i].codigo == code) {
@@ -238,9 +304,22 @@ void Editarproducto(struct Producto productos[], int cantidad) {
         case 3: //Cambio de Codigo
             for (int i = 0; i < cantidad; i++) {
                 if (productos[i].codigo == code) {
-                    printf("Ingrese el nuevo codigo del producto: ");
-                    fflush(stdin);
-                    scanf("%d", &productos[i].codigo);
+                    do{
+                        CodigoRepetido = 0; //Reinicia a que el codigo no sea repetido
+                        printf("Ingrese el nuevo codigo del producto: ");
+                        fflush(stdin);
+                        scanf("%d", &productos[i].codigo);
+                        if (productos[i].codigo < 0) {
+                            printf("\tEl codigo no puede ser negativo.\n");
+                        }
+                        for (int j = 0; j < cantidad; j++) {
+                            if (j != i && productos[i].codigo == productos[j].codigo) {
+                                printf("\tEl codigo ya existe. Intente nuevamente.\n");
+                                CodigoRepetido = 1; // Marca que el código es repetido
+                                break;                
+                            }
+                        }
+                    }while (productos[i].codigo < 0 || CodigoRepetido == 1);
                     printf("Codigo actualizado a: %d\n", productos[i].codigo);
                     return;
                 }
@@ -320,11 +399,11 @@ void EliminarProducto(struct Producto productos[], int *cantidad, struct Product
 }
 
 
-void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDisponible, int recursosDisponibles) {
-    int tiempoAcumulado = 0;
+void CalcularDemanda(struct Producto productos[], int cantidad, float tiempoDisponible, int recursosDisponibles) {
+    float tiempoAcumulado = 0;
     int recursosAcumulados = 0;
 
-    printf("Tiempo disponible: %d horas\n", tiempoDisponible);
+    printf("Tiempo disponible: %.2f horas\n", tiempoDisponible);
     printf("Recursos disponibles: %d unidades\n", recursosDisponibles);
     printf("--- Demanda General ---\n");
 
@@ -335,11 +414,11 @@ void CalcularDemanda(struct Producto productos[], int cantidad, int tiempoDispon
     }
 
     // Mostrar resultados de tiempo
-    printf("Tiempo total requerido: %d horas\n", tiempoAcumulado);
+    printf("Tiempo total requerido: %.2f horas\n", tiempoAcumulado);
     if (tiempoAcumulado <= tiempoDisponible) {
         printf("Se cumple con la demanda de tiempo.\n");
     } else {
-        printf("No se cumple con la demanda de tiempo. Excede por %d horas.\n", tiempoAcumulado - tiempoDisponible);
+        printf("No se cumple con la demanda de tiempo. Excede por %.2f horas.\n", tiempoAcumulado - tiempoDisponible);
     }
 
     // Mostrar resultados de recursos

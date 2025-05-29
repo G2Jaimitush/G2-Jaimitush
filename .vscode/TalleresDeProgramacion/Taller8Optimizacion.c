@@ -7,22 +7,42 @@ int main() {
     int cantidad = pedirCantidad();
 
     // Variables para tiempo y recursos
-    int TiempoDisponible;
+    float TiempoDisponible,RecursosDisponibles_entrada;
     int RecursosDisponibles;
 
 
     // Pedir tiempo y recursos disponibles 
     do{
-    printf ("Ingrese el tiempo total disponible (horas): ");
-    scanf("%d", &TiempoDisponible);
+        printf ("Ingrese el tiempo total disponible (horas): ");
+        if (scanf("%f",&TiempoDisponible)!=1)
+        {
+            //Comprueba si el valor no tiene letras
+            printf("Debe de ingresar un número, ingrese de nuevo: \n");
+            while (getchar()!='\n');
+            goto valid;
+        }
         if (TiempoDisponible <= 0) {
-            printf("\tEl tiempo debe ser mayor a 0. Intente nuevamente.\n");
+                printf("\tEl tiempo debe ser mayor a 0. Intente nuevamente.\n");
         }
     }while (TiempoDisponible <= 0);
+
+    
     
     do{
+        valid: 
         printf ("Ingrese los recursos totales disponibles: ");
-        scanf("%d", &RecursosDisponibles);
+        if (scanf("%f",&RecursosDisponibles_entrada)!=1){
+            printf("Debe de ingresar un número, ingrese de nuevo:\n");
+            while (getchar()!='\n');
+        goto valid;
+        }
+        //Comprueba si el valor es entero o flotante
+        if(ceilf(RecursosDisponibles_entrada)!=RecursosDisponibles_entrada){
+            printf("Debe de ingresar un valor entero, ingrese de nuevo:\n");
+            while (getchar()!='\n');
+        goto valid;
+        }
+        RecursosDisponibles=RecursosDisponibles_entrada;
         if (RecursosDisponibles <= 0) {
             printf("\tLos recursos deben ser mayores a 0. Intente nuevamente.\n");
         }
