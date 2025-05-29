@@ -106,22 +106,39 @@ void ingresarProductos(struct Producto productos[], int cantidad) {
 
         //Ingreso del codigo
         int CodidoRepetido;
+        int valido;
+        float codigo_entrada;
         do{
             CodidoRepetido = 0; //Reinicia a que el codigo no sea repetido
+            valido = 1;
             printf("Codigo: ");
-            scanf("%d", &productos[i].codigo);
-            if (productos[i].codigo < 0) {
-                printf("\tEl codigo no puede ser negativo.\n");
+            fflush(stdin);
+            if (scanf("%f", &codigo_entrada) != 1) {
+                printf("\tDebe ingresar un número válido. Intente nuevamente.\n");
+                while (getchar() != '\n');
+                valido = 0;
+            } else if (ceilf(codigo_entrada) != codigo_entrada) {
+                printf("\tEl codigo no puede contener decimales. Intente nuevamente.\n");
+                while (getchar() != '\n');
+                valido = 0;
+            } else if (codigo_entrada < 0) {
+                printf("\tEl codigo no puede ser negativo. Intente nuevamente.\n");
+                valido = 0;
             }
+
+        if (valido) {
+            productos[i].codigo = (int)codigo_entrada;
 
             for (int j = 0; j < i; j++) {
                 if (productos[i].codigo == productos[j].codigo) {
                     printf("\tEl codigo ya existe. Intente nuevamente.\n");
-                    CodidoRepetido = 1; // Marca que el código es repetido
-                    break;                
+                    CodidoRepetido = 1;
+                    break;
                 }
-            }   
-        }while (productos[i].codigo < 0||CodidoRepetido == 1);
+            }
+        }
+
+    } while (CodidoRepetido == 1 || codigo_entrada < 0 || ceilf(codigo_entrada) != codigo_entrada);
 
 
         //Ingresar cantidad de demanda y validacion de que sea mayor a 0
@@ -239,9 +256,14 @@ void buscarProducto(struct Producto productos[], int cantidad){
 void Editarproducto(struct Producto productos[], int cantidad) {
     int code, opc2, indice = -1;
     int CodigoRepetido;
-        printf("Ingrese el codigo del producto a editar: ");
-        fflush(stdin);
-        scanf("%d", &code);
+    float recursos_entrada;
+    float recursos_unidad;
+    float codigo_entrada;
+    int valido;
+
+    printf("Ingrese el codigo del producto a editar: ");
+    fflush(stdin);
+    scanf("%d", &code);
     // Buscar el producto
     for (int i = 0; i < cantidad; i++) {
         if (productos[i].codigo == code) {
@@ -306,44 +328,96 @@ void Editarproducto(struct Producto productos[], int cantidad) {
                 if (productos[i].codigo == code) {
                     do{
                         CodigoRepetido = 0; //Reinicia a que el codigo no sea repetido
+                        valido = 1;
                         printf("Ingrese el nuevo codigo del producto: ");
                         fflush(stdin);
-                        scanf("%d", &productos[i].codigo);
-                        if (productos[i].codigo < 0) {
-                            printf("\tEl codigo no puede ser negativo.\n");
+                        if (scanf("%f", &codigo_entrada) != 1) {
+                        printf("Debe ingresar un número válido. Intente nuevamente:\n");
+                        while (getchar() != '\n');
+                        valido = 0;
+                    }else if (ceilf(codigo_entrada) != codigo_entrada) {
+                        printf("El codigo no puede contener decimales. Intente nuevamente:\n");
+                        while (getchar() != '\n');
+                        valido = 0;
+                    }else if (codigo_entrada <= 0) {
+                        printf("El codigo no puede ser negativo. Intente nuevamente:\n");
+                        valido = 0;
+                    } else{
+                        productos[i].codigo = (int)codigo_entrada;
+
+                    // Verificar si el código ya existe en otro producto
+                    for (int j = 0; j < cantidad; j++) {
+                        if (j != i && productos[i].codigo == productos[j].codigo) {
+                            printf("El codigo ya existe. Intente nuevamente:\n");
+                            CodigoRepetido = 1;
+                            valido = 0;
+                            break;
                         }
-                        for (int j = 0; j < cantidad; j++) {
-                            if (j != i && productos[i].codigo == productos[j].codigo) {
-                                printf("\tEl codigo ya existe. Intente nuevamente.\n");
-                                CodigoRepetido = 1; // Marca que el código es repetido
-                                break;                
-                            }
-                        }
-                    }while (productos[i].codigo < 0 || CodigoRepetido == 1);
-                    printf("Codigo actualizado a: %d\n", productos[i].codigo);
-                    return;
+                    }
                 }
+
+            } while (valido == 0 || CodigoRepetido == 1);
+
+            printf("Codigo actualizado a: %d\n", productos[i].codigo);
+            return;
             }
-            break;
+        }
+        break;
 
         case 4: // Cantidad de demanda por Producto
             for (int i = 0; i < cantidad; i++) {
                 if (productos[i].codigo == code) {
-                    printf("Ingrese la nueva cantidad demandada del producto: ");
-                    fflush(stdin);
-                    scanf("%d", &productos[i].cantidad);
-                    printf("Cantidad demandada actualizada a: %d\n", productos[i].cantidad);
-                    return;
+            REPETIR:
+                printf("Ingrese la nueva cantidad demandada del producto: ");
+                fflush(stdin);
+
+                if (scanf("%f", &recursos_entrada) != 1) {
+                    printf("Debe de ingresar un número válido. Intente nuevamente:\n");
+                    while (getchar() != '\n'); // Limpiar buffer
+                    goto REPETIR;
                 }
+
+                if (ceilf(recursos_entrada) != recursos_entrada) {
+                    printf("Debe de ingresar un valor entero. Intente nuevamente:\n");
+                    while (getchar() != '\n');
+                    goto REPETIR;
+                }
+
+                if (recursos_entrada <= 0) {
+                    printf("La cantidad debe ser mayor a 0. Intente nuevamente:\n");
+                    goto REPETIR;
+                }
+                productos[i].cantidad = (int)recursos_entrada;
+                printf("Cantidad demandada actualizada a: %d\n", productos[i].cantidad);
+            return;
             }
+        }
         break;
+
 
         case 5: // Recursos por unidad
             for (int i = 0; i < cantidad; i++) {
                 if (productos[i].codigo == code) {
+                    REPETIR_RECURSOS:
                     printf("Ingrese la nueva cantidad de recursos por unidad del producto: ");
                     fflush(stdin);
-                    scanf("%d", &productos[i].CantidadRecursos);
+                    if (scanf("%f", &recursos_unidad) != 1) {
+                        printf("Debe de ingresar un número válido. Intente nuevamente:\n");
+                        while (getchar() != '\n'); // Limpiar buffer
+                        goto REPETIR_RECURSOS;
+                    }
+
+                    if (ceilf(recursos_unidad) != recursos_unidad) {
+                        printf("Debe de ingresar un valor entero. Intente nuevamente:\n");
+                        while (getchar() != '\n');
+                        goto REPETIR_RECURSOS;
+                    }
+
+                    if (recursos_unidad <= 0) {
+                        printf("La cantidad de recursos debe ser mayor a 0. Intente nuevamente:\n");
+                        goto REPETIR_RECURSOS;
+                    }
+                    productos[i].CantidadRecursos = (int)recursos_unidad;
                     printf("Recursos por unidad actualizados a: %d\n", productos[i].CantidadRecursos);
                     return;
                 }
