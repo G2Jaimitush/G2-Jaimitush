@@ -109,7 +109,20 @@ REPETIRTITULO:
             } while (buf != '\n');
             goto REPETIRTITULO;
         }
+        //Veriicar que el nombre de libro no este vacio
+        if (strcmp(cadena, "") == 0) {
+            printf("El titulo no puede estar vacio. Intente nuevamente:\n");
+            goto REPETIRTITULO;
+        }
 
+
+        //Verificcar que no se repita el nombre del libro
+        for (int j = 0; j < i; j++) {
+            if (strcasecmp(Libro[j].titulo, cadena) == 0) {
+                printf("El titulo ya existe. Intente nuevamente:\n");
+                goto REPETIRTITULO;
+            }
+        }
         strcpy(Libro[i].titulo, cadena);
 
         // Autor del libro
@@ -179,7 +192,9 @@ valid:
 
 // Mostrar la lista de libros
 void MostrarLibros(struct Libros libros[], int cantidad) {
-    printf("\n%-6s | %-25s | %-20s | %-8s | %-12s\n", 
+    if (cantidad!=0){
+        
+        printf("\n%-6s | %-25s | %-20s | %-8s | %-12s\n", 
            "ID", "Titulo", "Autor", "Periodo", "Estado");
     printf("-------------------------------------------------------------------------------\n");
 
@@ -188,10 +203,15 @@ void MostrarLibros(struct Libros libros[], int cantidad) {
                libros[i].ID, libros[i].titulo, libros[i].autor, 
                libros[i].FechaPublicacion, libros[i].estado);
     }
+    }else
+    {
+        printf("No hay libros en el sistema, por favor ingrese un libro con la opción 6\n");
+    }
 }
 
 // Para libros individuales
 void mostrarencontrado(int i, struct Libros libros[]) {
+   
     printf("\n%-6s | %-25s | %-20s | %-8s | %-12s\n", 
            "ID", "Titulo", "Autor", "Periodo", "Estado");
     printf("-------------------------------------------------------------------------------\n");
@@ -218,10 +238,26 @@ int buscarProducto(struct Libros libros[], int cantidad) {
                 printf("Libro encontrado: ");
                 mostrarencontrado(i, libros);
                 return i;
+            }else{
+                printf ("Libro no encontrado.\n");
             }
         }
     } else if (opc == 2) {
         printf("Ingrese el titulo del producto a buscar: ");
+        char tituloBusqueda[100];
+        fgets(tituloBusqueda, sizeof(tituloBusqueda), stdin);
+        // Eliminar el salto de línea al final del título
+        tituloBusqueda[strcspn(tituloBusqueda, "\n")] = '\0';
+        for (int i = 0; i < cantidad; i++) {
+            libros[i].titulo[strcspn(libros[i].titulo, "\n")] = '\0'; // Eliminar salto de línea
+            if (strcmp(tituloBusqueda, libros[i].titulo) == 0) {
+                printf("Libro encontrado: ");
+                mostrarencontrado(i, libros);
+                return i;
+            }else{
+                printf ("Libro no encontrado.\n");
+            }
+        }
     } else {
         printf("Opcion invalida. Debe ser 1 o 2.\n");
         goto REPETIR;
@@ -293,13 +329,29 @@ void EditarLibro(struct Libros libros[], int cantidad) {
                     }
                     case 2: {
                         char nuevoTitulo[100];
+                        REPETIRTITULO1:
                         printf("Ingrese el nuevo titulo: ");
                         fgets(nuevoTitulo, sizeof(nuevoTitulo), stdin);
                         if (nuevoTitulo[strlen(nuevoTitulo) - 1] == '\n')
                             nuevoTitulo[strlen(nuevoTitulo) - 1] = '\0';
+
+                        // Verificar que no esté vacío
+                        if (strcmp(nuevoTitulo, "") == 0) {
+                            printf("El titulo no puede estar vacio. Intente nuevamente:\n");
+                            goto REPETIRTITULO1;
+                        }
+
+                        // Verificar que no se repita el titulo con otro libro
+                        for (int j = 0; j < cantidad; j++) {
+                            if (j != i && strcasecmp(libros[j].titulo, nuevoTitulo) == 0) {
+                                printf("El titulo ya existe. Intente nuevamente:\n");
+                                goto REPETIRTITULO;
+                            }
+                        }
+
                         strcpy(libros[i].titulo, nuevoTitulo);
                         printf("Titulo actualizado a '%s'.\n", nuevoTitulo);
-                    break;
+                        break;
                     }
 
                     case 3: {
@@ -350,7 +402,7 @@ void EditarLibro(struct Libros libros[], int cantidad) {
         int encontrado = 0;
         for (int i = 0; i < cantidad; i++) {
             libros[i].titulo[strcspn(libros[i].titulo, "\n")] = '\0'; // Eliminar salto de línea
-            if (strcmp(tituloBusqueda, libros[i].titulo) == 0) {
+            if (strcasecmp(tituloBusqueda, libros[i].titulo) == 0) {
                 encontrado = 1;
                 printf("Libro encontrado: ");
                 mostrarencontrado(i, libros);
@@ -376,13 +428,29 @@ void EditarLibro(struct Libros libros[], int cantidad) {
                     }
                     case 2: {
                         char nuevoTitulo[100];
+                        REPETIRTITULO:
                         printf("Ingrese el nuevo titulo: ");
                         fgets(nuevoTitulo, sizeof(nuevoTitulo), stdin);
                         if (nuevoTitulo[strlen(nuevoTitulo) - 1] == '\n')
                             nuevoTitulo[strlen(nuevoTitulo) - 1] = '\0';
+
+                        // Verificar que no esté vacío
+                        if (strcmp(nuevoTitulo, "") == 0) {
+                            printf("El titulo no puede estar vacio. Intente nuevamente:\n");
+                            goto REPETIRTITULO;
+                        }
+
+                        // Verificar que no se repita el titulo con otro libro
+                        for (int j = 0; j < cantidad; j++) {
+                            if (j != i && strcasecmp(libros[j].titulo, nuevoTitulo) == 0) {
+                                printf("El titulo ya existe. Intente nuevamente:\n");
+                                goto REPETIRTITULO;
+                            }
+                        }
+
                         strcpy(libros[i].titulo, nuevoTitulo);
                         printf("Titulo actualizado a '%s'.\n", nuevoTitulo);
-                    break;
+                        break;
                     }
 
                     case 3: {
@@ -427,18 +495,6 @@ void EditarLibro(struct Libros libros[], int cantidad) {
 }
 
 
-//Mostrar todos los libros ingresados e actualizados
-void MostrarLibro(struct Libros libros[], int cantidad) {
-    printf("\n%-6s | %-25s | %-20s | %-8s | %-12s\n", 
-           "ID", "Titulo", "Autor", "Periodo", "Estado");
-    printf("-------------------------------------------------------------------------------\n");
-
-    for (int i = 0; i < cantidad; i++) {
-        printf("%-6d | %-25s | %-20s | %-8d | %-12s\n",
-               libros[i].ID, libros[i].titulo, libros[i].autor, 
-               libros[i].FechaPublicacion, libros[i].estado);
-    }
-}
 
 
 // Eliminar un libro
@@ -465,4 +521,155 @@ void EliminarLibro(struct Libros libros[], int *cantidad, struct Libros eliminad
         }
     }
     printf("Producto no encontrado.\n");
+}
+//Agregar libros (restringir que no se pase de 10)
+
+void Agregarlibro (struct Libros libros[], int *cantidad){
+    if(*cantidad<10){
+    //sumar 1 espacio en estructura
+    *cantidad=*cantidad+1;
+    //ingreso de datos con misma lógica de IngresarLibros eliminando el for y usando como indice la cantidad
+    int i=*cantidad-1;
+    int codigoRepetido, valido;
+    float codigo_entrada;
+
+   
+        // ID del libro
+        do {
+            codigoRepetido = 0;
+            valido = 1;
+            printf("\nIngrese el ID del libro %d: ", i + 1);
+
+            if (scanf("%f", &codigo_entrada) != 1) {
+                printf("Debe ingresar un numero válido. Intente nuevamente:\n");
+                while (getchar() != '\n');
+                valido = 0;
+            } else {
+                while (getchar() != '\n');
+
+                if (ceilf(codigo_entrada) != codigo_entrada) {
+                    printf("El ID no puede contener decimales. Intente nuevamente:\n");
+                    valido = 0;
+                } else if (codigo_entrada <= 0) {
+                    printf("El ID no puede ser negativo. Intente nuevamente:\n");
+                    valido = 0;
+                } else {
+                    libros[i].ID = (int)codigo_entrada;
+
+                    for (int j = 0; j < i; j++) {
+                        if (libros[i].ID == libros[j].ID) {
+                            printf("El ID ya existe. Intente nuevamente:\n");
+                            codigoRepetido = 1;
+                            valido = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+        } while (codigoRepetido == 1 || !valido);
+
+        // Título del libro
+        printf("Ingrese el titulo del libro %d: ", i + 1);
+        char cadena[101];
+        int exceso, buf;
+
+REPETIRTITULO:
+        exceso = 0;
+        fgets(cadena, sizeof(cadena), stdin);
+
+        if (cadena[strlen(cadena) - 1] == '\n') {
+            cadena[strlen(cadena) - 1] = '\0';
+        } else {
+            exceso = 1;
+        }
+
+        if (exceso) {
+            printf("Ingresaste mas de 100 caracteres\n");
+            do {
+                buf = getchar();
+            } while (buf != '\n');
+            goto REPETIRTITULO;
+        }
+
+        //Veriicar que el nombre de libro no este vacio
+        if (strcasecmp(cadena, "") == 0) {
+            printf("El titulo no puede estar vacio. Intente nuevamente:\n");
+            goto REPETIRTITULO;
+        }
+
+        //Verificcar que no se repita el nombre del libro
+        for (int j = 0; j < i; j++) {
+            if (strcasecmp(libros[j].titulo, cadena) == 0) {
+                printf("El titulo ya existe. Intente nuevamente:\n");
+                goto REPETIRTITULO;
+            }
+        }
+        strcpy(libros[i].titulo, cadena);
+
+        // Autor del libro
+        printf("Ingrese el autor del libro %d: ", i + 1);
+        char autor[51];
+        int exceso_autor, buf_autor;
+
+REPETIRNOMBRE:
+        exceso_autor = 0;
+        fgets(autor, sizeof(autor), stdin);
+
+        if (autor[strlen(autor) - 1] == '\n') {
+            autor[strlen(autor) - 1] = '\0';
+        } else {
+            exceso_autor = 1;
+        }
+
+        if (exceso_autor) {
+            printf("Ingresaste mas de 50 caracteres\n");
+            do {
+                buf_autor = getchar();
+            } while (buf_autor != '\n');
+            goto REPETIRNOMBRE;
+        }
+
+        strcpy(libros[i].autor, autor);
+
+        // Fecha de publicación
+
+        int fecha;
+valid:
+        do {
+            printf("Ingrese el periodo de publicacion del libro %d: ", i + 1);
+            if (scanf("%d", &fecha) != 1 || fecha < 0) {
+                printf("Periodo invalido. Debe ser un numero positivo. Intente nuevamente:\n");
+                while (getchar()!='\n');
+                goto valid;
+            } 
+            else{
+                libros[i].FechaPublicacion = fecha;
+            }
+            
+            if (fecha < 0 || fecha > 2025) {
+                printf("El periodo debe estar entre 0 y 2025. Intente nuevamente:\n");
+            }
+        } while (fecha < 0 || fecha > 2025); 
+
+        // Estado del libro
+        printf("Ingrese el estado del libro %d ('Disponible' o 'Prestado')\n", i + 1);
+        printf("\tPresione (1) para 'Disponible' o (2) para 'Prestado': ");
+        int estado;
+        do {
+            while (getchar() != '\n'); // Limpia el búfer antes del scanf
+            if (scanf("%d", &estado) != 1 || (estado != 1 && estado != 2)) {
+                printf("Estado invalido. Debe ser 1 o 2. Intente nuevamente:\n");
+                while (getchar() != '\n');
+            } else {
+                if (estado == 1) {
+                    strcpy(libros[i].estado, "Disponible");
+                } else {
+                    strcpy(libros[i].estado, "Prestado");
+                }
+            }
+        } while (estado != 1 && estado != 2);
+    
+    }else{
+        printf("No puede ingresar más de 10 libros, elimine uno para agregar otro");
+    }
 }

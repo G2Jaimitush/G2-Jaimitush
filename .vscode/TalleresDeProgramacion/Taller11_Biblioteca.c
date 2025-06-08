@@ -46,6 +46,10 @@ int main (){
                 EliminarLibro(libros, &cantidad, eliminados, &eliminadosCount);
             break;
             
+            case 6:
+                Agregarlibro(libros, &cantidad);
+            break;
+
             default:
                 printf ("Opcion invalida, intente de nuevo\n");
             break;
