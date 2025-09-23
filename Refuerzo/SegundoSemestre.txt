@@ -28,12 +28,9 @@ Interaccion Efectiva en Sistemas Sociales
 9.00
 9.50
 9.40
-
- -----------------------
-Promedios Finales:
- Fisica:  8.27
- Calculo II:  8.72
- Programacion I:  9.49
- Ingles Elemental II:  8.22
- Pensamiento Critico:  9.48
- Interaccion Efectiva en Sistemas Sociales:  9.34
+8.27
+8.72
+9.49
+8.22
+9.48
+9.34
